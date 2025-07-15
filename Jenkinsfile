@@ -40,12 +40,15 @@ pipeline {
       }
       steps {
         sh "mvn clean test -P${params.TEST_TYPE}"
+        stash name: 'allure-results', includes: 'target/allure-results/**'
       }
     }
 
     stage('Publish Allure Report') {
       agent any
       steps {
+        deleteDir()
+        unstash 'allure-results'
         allure([
           results: [[path: 'target/allure-results']],
           report: 'allure-report',
