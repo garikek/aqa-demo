@@ -1,5 +1,6 @@
 package com.software.modsen.demo.ui;
 
+import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import io.qameta.allure.*;
 import io.qameta.allure.selenide.AllureSelenide;
@@ -19,6 +20,10 @@ class SauceDemoUiTest {
 
     @BeforeAll
     void setUp() {
+        Configuration.browser = "chrome";
+        Configuration.headless = true;
+        Configuration.timeout = 5000;
+
         step("Configure Selenide and start browser", () -> addListener("AllureSelenide",
                 new AllureSelenide()
                         .screenshots(true)
