@@ -7,12 +7,6 @@ pipeline {
 
   options {
     skipDefaultCheckout()
-
-    buildDiscarder(logRotator(
-      numToKeepStr: '10',
-      daysToKeepStr: '30',
-      artifactNumToKeepStr: '5'
-    ))
   }
 
   parameters {
@@ -70,6 +64,7 @@ pipeline {
       deleteDir()
       unstash 'allure-html'
 
+//       archiveArtifacts artifacts: 'target/allure-results/**/*', fingerprint: true
       archiveArtifacts artifacts: 'allure-report/**/*', fingerprint: true
 
       publishHTML([
