@@ -39,7 +39,7 @@ pipeline {
     stage('Build & Test') {
       agent {
         docker {
-          image 'garikek/maven-chrome:latest'
+          image 'garikek/maven-chrome:1.1'
           args  '-v $HOME/.m2:/root/.m2'
           reuseNode true
         }
@@ -47,7 +47,7 @@ pipeline {
       steps {
         checkout scm
 
-        sh "mvn clean test -P${params.TEST_TYPE}"
+        sh "mvn clean test -P${params.TEST_TYPE} -Dselenide.browser.arguments="--no-sandbox,--disable-dev-shm-usage""
         stash name: 'allure-results', includes: 'target/allure-results/**'
       }
     }
