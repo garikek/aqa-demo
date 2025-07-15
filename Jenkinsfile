@@ -36,16 +36,28 @@ pipeline {
       }
     }
 
+    stage('Start Selenoid') {
+      steps {
+        sh '''
+          docker run -d --name selenoid \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v $PWD/selenoid/config/:/etc/selenoid/:ro \
+            -p 4444:4444 \
+            aerokube/selenoid:latest-release
+        '''
+      }
+    }
+
     stage('Build & Test') {
       agent {
         docker {
           image 'maven:3.9.10-eclipse-temurin-21'
-          args  '--network host -v $HOME/.m2:/root/.m2'
+          args  '-v $HOME/.m2:/root/.m2 --link selenoid:selenoid'
           reuseNode true
         }
       }
       environment {
-        SELENOID_URL = 'http://localhost:4444/wd/hub'
+        SELENOID_URL = 'http://selenoid:4444/wd/hub'
       }
       steps {
         checkout scm
