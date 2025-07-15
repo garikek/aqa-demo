@@ -48,12 +48,13 @@ pipeline {
         checkout scm
 
 //         sh "mvn clean test -P${params.TEST_TYPE} -Dselenide.browser.arguments="--no-sandbox,--disable-dev-shm-usage""
+//           Xvfb :99 -screen 0 1920x1080x24 &
+//           export DISPLAY=:99
         sh '''
-          Xvfb :99 -screen 0 1920x1080x24 &
-          export DISPLAY=:99
-
           mvn clean test -P${TEST_TYPE} \
-            -Dselenide.browser.arguments="--no-sandbox,--disable-dev-shm-usage"
+            -Dselenide.browser=chrome \
+            -Dselenide.headless=true \
+            -Dselenide.browser.arguments="--no-sandbox,--disable-dev-shm-usage, --disable-gpu,--remote-debugging-port=9222"
         '''
         stash name: 'allure-results', includes: 'target/allure-results/**'
       }
