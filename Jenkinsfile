@@ -1,5 +1,5 @@
 pipeline {
-  agent any
+  agent none
 
   options {
       skipDefaultCheckout()
@@ -19,7 +19,9 @@ pipeline {
 
   stages {
     stage('Checkout') {
+      agent any
       steps {
+        deleteDir()
         checkout scm
       }
     }
@@ -29,6 +31,7 @@ pipeline {
             docker {
               image 'maven:3.9.10-eclipse-temurin-21'
               args  '-v $HOME/.m2:/root/.m2'
+              reuseNode true
             }
         }
         steps {
@@ -37,6 +40,7 @@ pipeline {
     }
 
     stage('Publish Allure Report') {
+      agent any
       steps {
         allure([
           results: [[path: env.ALLURE_RESULTS]],
