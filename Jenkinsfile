@@ -54,13 +54,17 @@ pipeline {
           report: 'allure-report',
           reportBuildPolicy: 'ALWAYS'
         ])
+        stash name: 'allure-html', includes: 'allure-report/**'
       }
     }
   }
 
   post {
     always {
-      archiveArtifacts artifacts: 'target/allure-results/**/*', fingerprint: true
+      deleteDir()
+      unstash 'allure-html'
+
+//       archiveArtifacts artifacts: 'target/allure-results/**/*', fingerprint: true
       archiveArtifacts artifacts: 'allure-report/**/*', fingerprint: true
 
       publishHTML([
