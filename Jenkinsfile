@@ -28,6 +28,8 @@ pipeline {
             }
           }
           steps {
+            checkout scm
+
             sh "mvn clean test -P${params.TEST_TYPE}"
           }
         }
