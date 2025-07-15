@@ -39,22 +39,24 @@ pipeline {
     stage('Build & Test') {
       agent {
         docker {
-          image 'garikek/maven-chrome:1.1'
+          image 'maven:3.9.10-eclipse-temurin-21'
           args  '-v $HOME/.m2:/root/.m2'
           reuseNode true
         }
       }
+      environment {
+        SELENOID_URL = 'http://selenoid:4444/wd/hub'
+      }
       steps {
         checkout scm
 
-//         sh "mvn clean test -P${params.TEST_TYPE} -Dselenide.browser.arguments="--no-sandbox,--disable-dev-shm-usage""
-//           Xvfb :99 -screen 0 1920x1080x24 &
-//           export DISPLAY=:99
         sh '''
           mvn clean test -P${TEST_TYPE} \
+            -Dselenide.remote=${SELENOID_URL} \
             -Dselenide.browser=chrome \
-            -Dselenide.headless=true \
-            -Dselenide.browser.arguments="--no-sandbox,--disable-dev-shm-usage, --disable-gpu,--remote-debugging-port=9222"
+            -Dselenide.browser.version=128.0 \
+            -Dselenide.browserSize=1920x1080 \
+            -Dselenide.headless=false
         '''
         stash name: 'allure-results', includes: 'target/allure-results/**'
       }
