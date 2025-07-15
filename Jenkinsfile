@@ -39,6 +39,8 @@ pipeline {
         }
       }
       steps {
+        checkout scm
+
         sh "mvn clean test -P${params.TEST_TYPE}"
         stash name: 'allure-results', includes: 'target/allure-results/**'
       }
@@ -64,7 +66,6 @@ pipeline {
       deleteDir()
       unstash 'allure-html'
 
-//       archiveArtifacts artifacts: 'target/allure-results/**/*', fingerprint: true
       archiveArtifacts artifacts: 'allure-report/**/*', fingerprint: true
 
       publishHTML([
