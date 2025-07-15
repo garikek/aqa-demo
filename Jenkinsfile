@@ -39,7 +39,7 @@ pipeline {
     stage('Build & Test') {
       agent {
         docker {
-          image 'garikek/maven-chrome:21'
+          image 'garikek/maven-chrome:latest'
           args  '-v $HOME/.m2:/root/.m2'
           reuseNode true
         }
