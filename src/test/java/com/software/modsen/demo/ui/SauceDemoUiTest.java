@@ -21,7 +21,7 @@ class SauceDemoUiTest {
     @BeforeAll
     void setUp() {
         Configuration.browser = "chrome";
-        Configuration.headless = true;
+        Configuration.headless = false;
         Configuration.timeout = 5000;
 
         step("Configure Selenide and start browser", () -> addListener("AllureSelenide",

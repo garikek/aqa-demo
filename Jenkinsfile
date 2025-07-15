@@ -49,6 +49,9 @@ pipeline {
 
 //         sh "mvn clean test -P${params.TEST_TYPE} -Dselenide.browser.arguments="--no-sandbox,--disable-dev-shm-usage""
         sh '''
+          Xvfb :99 -screen 0 1920x1080x24 &
+          export DISPLAY=:99
+
           mvn clean test -P${TEST_TYPE} \
             -Dselenide.browser.arguments="--no-sandbox,--disable-dev-shm-usage"
         '''
