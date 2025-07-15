@@ -49,7 +49,7 @@ pipeline {
 
 //         sh "mvn clean test -P${params.TEST_TYPE} -Dselenide.browser.arguments="--no-sandbox,--disable-dev-shm-usage""
         sh '''
-          mvn clean test -P${params.TEST_TYPE} \
+          mvn clean test -P${TEST_TYPE} \
             -Dselenide.browser.arguments="--no-sandbox,--disable-dev-shm-usage"
         '''
         stash name: 'allure-results', includes: 'target/allure-results/**'
