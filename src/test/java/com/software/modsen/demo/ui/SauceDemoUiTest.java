@@ -1,5 +1,6 @@
 package com.software.modsen.demo.ui;
 
+import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import io.qameta.allure.*;
 import io.qameta.allure.selenide.AllureSelenide;
@@ -7,6 +8,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.openqa.selenium.chrome.ChromeOptions;
+
+import java.util.Collections;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
@@ -19,6 +23,19 @@ class SauceDemoUiTest {
 
     @BeforeAll
     void setUp() {
+        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+        ChromeOptions options = new ChromeOptions();
+        options.setExperimentalOption("useAutomationExtension", false);
+        options.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
+        options.addArguments(
+                "--headless=new",
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                "--remote-debugging-port=9222"
+        );
+        Configuration.browser = "chrome";
+        Configuration.browserCapabilities = options;
+
         step("Configure Selenide and start browser", () -> addListener("AllureSelenide",
                 new AllureSelenide()
                         .screenshots(true)
