@@ -56,7 +56,16 @@ pipeline {
 
   post {
     always {
-      archiveArtifacts artifacts: '**/target/*.log', allowEmptyArchive: true
+      archiveArtifacts artifacts: 'target/allure-results/**', fingerprint: true
+      archiveArtifacts artifacts: 'allure-report/**', fingerprint: true
+
+      publishHTML([
+            reportName: 'Allure HTML',
+            reportDir: 'allure-report',
+            reportFiles: 'index.html',
+            keepAll: true,
+            alwaysLinkToLastBuild: true
+      ])
     }
     failure {
       echo "Build failed! Investigate the Allure report."
