@@ -1,6 +1,10 @@
 pipeline {
   agent any
 
+  options {
+      skipDefaultCheckout()
+  }
+
   parameters {
     choice(
       name: 'TEST_TYPE',
@@ -21,18 +25,16 @@ pipeline {
     }
 
     stage('Build & Test') {
-          agent {
+        agent {
             docker {
               image 'maven:3.9.10-eclipse-temurin-21'
               args  '-v $HOME/.m2:/root/.m2'
             }
-          }
-          steps {
-            checkout scm
-
-            sh "mvn clean test -P${params.TEST_TYPE}"
-          }
         }
+        steps {
+            sh "mvn clean test -P${params.TEST_TYPE}"
+        }
+    }
 
     stage('Publish Allure Report') {
       steps {
