@@ -1,5 +1,5 @@
 pipeline {
-  agent none
+  agent any
 
   tools {
     allure 'Allure'
@@ -56,9 +56,7 @@ pipeline {
 
   post {
     always {
-      node {
-        archiveArtifacts artifacts: '**/target/*.log', allowEmptyArchive: true
-      }
+      archiveArtifacts artifacts: '**/target/*.log', allowEmptyArchive: true
     }
     failure {
       echo "Build failed! Investigate the Allure report."
