@@ -48,7 +48,7 @@ pipeline {
       steps {
         allure([
           results: [[path: 'target/allure-results']],
-          output : 'allure-report',
+          report: 'allure-report',
           reportBuildPolicy: 'ALWAYS'
         ])
       }
