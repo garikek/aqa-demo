@@ -40,7 +40,7 @@ pipeline {
       agent {
         docker {
           image 'maven:3.9.10-eclipse-temurin-21'
-          args  '-v $HOME/.m2:/root/.m2'
+          args  '--link selenoid:selenoid -v $HOME/.m2:/root/.m2'
           reuseNode true
         }
       }
