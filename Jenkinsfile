@@ -40,8 +40,7 @@ pipeline {
       agent {
         docker {
           image 'maven:3.9.10-eclipse-temurin-21'
-          args  '--network aqa-demo_default --network-alias selenoid \
-                 --shm-size=1g -v $HOME/.m2:/root/.m2'
+          args  '--shm-size=1g --link selenoid:selenoid -v $HOME/.m2:/root/.m2'
           reuseNode true
         }
       }
