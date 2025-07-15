@@ -47,8 +47,9 @@ pipeline {
       agent any
       steps {
         allure([
-          results: [[path: env.ALLURE_RESULTS]],
-          includeProperties: false
+          results: [[path: 'target/allure-results']],
+          output : 'allure-report',
+          reportBuildPolicy: 'ALWAYS'
         ])
       }
     }
@@ -56,8 +57,8 @@ pipeline {
 
   post {
     always {
-      archiveArtifacts artifacts: 'target/allure-results/**', fingerprint: true
-      archiveArtifacts artifacts: 'allure-report/**', fingerprint: true
+      archiveArtifacts artifacts: 'target/allure-results/**/*', fingerprint: true
+      archiveArtifacts artifacts: 'allure-report/**/*', fingerprint: true
 
       publishHTML([
             reportName: 'Allure HTML',
