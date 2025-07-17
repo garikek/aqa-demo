@@ -1,90 +1,61 @@
 pipeline {
-  agent any
+    agent any
 
-  tools {
-    allure 'Allure'
-  }
-
-  options {
-    skipDefaultCheckout()
-
-    buildDiscarder(logRotator(
-      numToKeepStr: '10',
-      daysToKeepStr: '30',
-      artifactNumToKeepStr: '10'
-    ))
-  }
-
-  parameters {
-    choice(
-      name: 'TEST_TYPE',
-      choices: ['api', 'ui'],
-      description: 'Which tests to run?'
-    )
-  }
-
-  environment {
-    ALLURE_RESULTS = 'target/allure-results'
-  }
-
-  stages {
-    stage('Checkout') {
-      agent any
-      steps {
-        deleteDir()
-        checkout scm
-      }
+    tools {
+        jdk     'jdk-21'
+        maven   'maven-3.9.6'
+        allure  'allure-2.34.1'
     }
 
-    stage('Build & Test') {
-      agent {
-        docker {
-          image 'garikek/maven-chrome:1.2'
-          args  '--shm-size=1g -v $HOME/.m2:/root/.m2'
-          reuseNode true
+    environment {
+        MAVEN_OPTS = "-Dmaven.repo.local=.m2/repository"
+    }
+
+    parameters {
+        choice(
+            name: 'TEST_TYPE',
+            choices: ['api', 'ui'],
+            description: 'Which tests to run?'
+        )
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git(
+                    url:   'https://github.com/garikek/aqa-demo',
+                    branch: 'dev'
+                )
+            }
         }
-      }
-      steps {
-        checkout scm
 
-        sh "mvn clean test -P${params.TEST_TYPE}"
-        stash name: 'allure-results', includes: 'target/allure-results/**'
-      }
+        stage('Run tests') {
+            steps {
+                echo "Running ${params.TEST_TYPE} tests..."
+                bat "mvn clean test -P${params.TEST_TYPE}"
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/TEST-*.xml'
+
+                    archiveArtifacts(
+                        allowEmptyArchive: true,
+                        artifacts: 'target/allure-results/**'
+                    )
+
+                    allure([
+                        includeProperties: false,
+                        jdk: '',
+                        results: [[path: 'target/allure-results']]
+                    ])
+                }
+            }
+        }
     }
 
-    stage('Publish Allure Report') {
-      agent any
-      steps {
-        deleteDir()
-        unstash 'allure-results'
-        allure([
-          results: [[path: 'target/allure-results']],
-          report: 'allure-report',
-          reportBuildPolicy: 'ALWAYS'
-        ])
-        stash name: 'allure-html', includes: 'allure-report/**'
-      }
+    post {
+        always {
+            echo 'Pipeline completed!'
+        }
     }
-  }
-
-  post {
-    always {
-      deleteDir()
-      unstash 'allure-html'
-
-      archiveArtifacts artifacts: 'allure-report/**/*', fingerprint: true
-
-      publishHTML([
-            reportName: 'Allure HTML',
-            reportDir: 'allure-report',
-            reportFiles: 'index.html',
-            allowMissing: false,
-            keepAll: true,
-            alwaysLinkToLastBuild: true
-      ])
-    }
-    failure {
-      echo "Build failed! Investigate the Allure report."
-    }
-  }
 }
