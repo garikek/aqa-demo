@@ -1,0 +1,60 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"Test Case ID: PET-001
+Title: Cleanup leftover pet
+Preconditions:
+  - Base URI is set to https://petstore.swagger.io/v2
+  - Pet with this ID may or may not exist
+
+Steps:
+  1. DELETE /pet/{uniqueId}
+
+Expected:
+  - HTTP 200 or 404
+","1583","PET-001: Cleanup leftover pet","","Thu Jul 17 11:32:55 MSK 2025","passed","Thu Jul 17 11:32:57 MSK 2025","","PetStore API Endpoints Tests","com.software.modsen.demo.tests.api.PetStoreApiTest","cleanupLeftoverPet"
+"Test Case ID: UI-001
+Title: Standard user completes an end-to-end purchase flow
+Preconditions:
+  - Browser is opened and Allure listener is configured
+  - User navigates to https://www.saucedemo.com/
+  - Credentials for standard_user are available
+
+Steps:
+  1. Open the login page
+  2. Enter username and password
+  3. Click Login and land on the inventory page
+  4. Add the first item to the cart
+  5. Verify cart badge shows one item
+  6. Open the cart and click Checkout
+  7. Fill in shipping information (First Name, Last Name, Postal Code)
+  8. Click Continue and then Finish
+
+Expected:
+  - The confirmation page shows text ""Thank you for your order!""
+","3116","UI-001: Standard user completes E2E purchase flow","","Thu Jul 17 11:32:59 MSK 2025","passed","Thu Jul 17 11:33:02 MSK 2025","","SauceDemo UI Tests","com.software.modsen.demo.tests.ui.SauceDemoUiTest","standardUserCanCheckout"
+"Test Case ID: PET-003
+Title: Retrieve and verify created pet
+Preconditions:
+  - Pet with this unique ID was just created
+
+Steps:
+  1. Poll GET /pet/{uniqueId} every 0.5s for up to 15s
+  2. Stop polling once HTTP 200 is returned
+
+Expected:
+  - HTTP 200
+  - Response body fields `id`, `name`, `status` match the original payload
+","1147","PET-003: Retrieve and verify created pet","","Thu Jul 17 11:32:58 MSK 2025","passed","Thu Jul 17 11:32:59 MSK 2025","","PetStore API Endpoints Tests","com.software.modsen.demo.tests.api.PetStoreApiTest","retrieveCreatedPet"
+"Test Case ID: PET-002
+Title: Create new pet with unique ID
+Preconditions:
+  - Base URI is set to https://petstore.swagger.io/v2
+  - No pet exists with this unique ID
+
+Steps:
+  1. Build JSON payload with id, name, photoUrls, status
+  2. POST /pet with the payload
+
+Expected:
+  - HTTP 200
+  - Response body fields `id`, `name`, `status` match the payload
+","1157","PET-002: Create new pet with unique ID","","Thu Jul 17 11:32:57 MSK 2025","passed","Thu Jul 17 11:32:58 MSK 2025","","PetStore API Endpoints Tests","com.software.modsen.demo.tests.api.PetStoreApiTest","createNewPet"

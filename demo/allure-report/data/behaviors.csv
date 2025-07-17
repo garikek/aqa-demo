@@ -1,0 +1,5 @@
+"BROKEN","EPIC","FAILED","FEATURE","PASSED","SKIPPED","STORY","UNKNOWN"
+"0","PetStore API","0","Pet Management","1","0","Delete existing pet","0"
+"0","","0","E2E Purchase Flow","1","0","Standard user completes an order","0"
+"0","PetStore API","0","Pet Management","1","0","Get pet by ID","0"
+"0","PetStore API","0","Pet Management","1","0","Create new pet","0"
