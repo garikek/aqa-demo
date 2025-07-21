@@ -2,12 +2,13 @@ package com.software.modsen.demo.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import lombok.Getter;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static io.qameta.allure.Allure.step;
-import static org.assertj.core.api.Assertions.assertThat;
 
+@Getter
 public class InventoryPage {
     private final ElementsCollection inventoryItems = $$(".inventory_item");
     private final SelenideElement cartBadge = $(".shopping_cart_badge");
@@ -19,16 +20,6 @@ public class InventoryPage {
                         .$(".btn_inventory")
                         .click()
         );
-        return this;
-    }
-
-    public InventoryPage assertCartBadgeCount(int expectedCount) {
-        step("Assert number of items in cart badge: " + expectedCount, () -> {
-            String actual = cartBadge.getText();
-            assertThat(actual)
-                    .as("Badge count")
-                    .isEqualTo(String.valueOf(expectedCount));
-        });
         return this;
     }
 

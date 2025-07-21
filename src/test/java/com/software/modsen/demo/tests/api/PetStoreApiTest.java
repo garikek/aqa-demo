@@ -3,8 +3,7 @@ package com.software.modsen.demo.tests.api;
 import com.software.modsen.demo.model.Pet;
 import com.software.modsen.demo.service.PetService;
 import io.qameta.allure.*;
-import io.qameta.allure.restassured.AllureRestAssured;
-import io.restassured.RestAssured;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.*;
 
 import java.time.Duration;
@@ -12,20 +11,19 @@ import java.time.Duration;
 import static com.software.modsen.demo.data.PetDataFactory.uniquePet;
 import static io.qameta.allure.Allure.step;
 import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
 
 @Epic("PetStore API")
 @Feature("Pet Management")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("PetStore API Endpoints Tests")
-public class PetStoreApiTest {
+public class PetStoreApiTest extends BaseApiTest {
     private static final PetService service = new PetService();
     private static Pet testPet;
 
     @BeforeAll
-    static void setup() {
-        RestAssured.filters(new AllureRestAssured());
-        RestAssured.baseURI = "https://petstore.swagger.io/v2";
+    static void initPet() {
         testPet = uniquePet();
     }
 
@@ -48,8 +46,11 @@ public class PetStoreApiTest {
           - HTTP 200 or 404
         """)
     void cleanupLeftoverPet() {
-        step("Delete pet if exists (id=" + testPet.getId() + ")",
-                () -> service.deleteIfExists(testPet.getId()));
+        step("Delete pet if exists (id=" + testPet.getId() + ")", () -> {
+            Response response = service.deleteIfExists(testPet.getId());
+            response.then()
+                    .statusCode(anyOf(is(200), is(404)));
+        });
     }
 
     @Test
@@ -73,8 +74,14 @@ public class PetStoreApiTest {
           - Response body fields `id`, `name`, `status` match the payload
         """)
     void createNewPet() {
-        step("Create pet " + testPet,
-                () -> service.createPet(testPet));
+        step("Create pet", () -> {
+            Response response = service.createPet(testPet);
+            response.then()
+                    .statusCode(200)
+                    .body("id",   is(testPet.getId()))
+                    .body("name", is(testPet.getName()))
+                    .body("status", is(testPet.getStatus()));
+        });
     }
 
     @Test
@@ -101,10 +108,10 @@ public class PetStoreApiTest {
                 .pollInterval(Duration.ofMillis(500))
                 .atMost(Duration.ofSeconds(15))
                 .untilAsserted(() -> {
-                    var response = service.getPetById(testPet.getId());
+                    Response response = service.getPetById(testPet.getId());
                     response.then()
                             .statusCode(200)
-                            .body("id", is(testPet.getId()))
+                            .body("id",   is(testPet.getId()))
                             .body("name", is(testPet.getName()))
                             .body("status", is(testPet.getStatus()));
                 }));

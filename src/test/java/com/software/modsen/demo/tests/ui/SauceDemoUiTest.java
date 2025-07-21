@@ -2,6 +2,7 @@ package com.software.modsen.demo.tests.ui;
 
 import com.software.modsen.demo.page.LoginPage;
 import io.qameta.allure.*;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -34,15 +35,27 @@ public class SauceDemoUiTest extends BaseUiTest {
           - The confirmation page shows text "Thank you for your order!"
         """)
     void standardUserCanCheckout() {
-        new LoginPage()
-                .openPage()
+        var inventory = new LoginPage()
                 .logInAs("standard_user", "secret_sauce")
-                .addFirstItemToCart()
-                .assertCartBadgeCount(1)
+                .addFirstItemToCart();
+        int badgeCount = Integer.parseInt(inventory.getCartBadge().getText());
+
+        var checkout = inventory
                 .openCart()
                 .checkout()
-                .fillShippingInfo("Name", "Surname", "123456")
-                .finishCheckout()
-                .assertOrderConfirmation("Thank you for your order!");
+                .fillShippingInfo("Name", "Surname", "123456");
+
+        var confirmation = checkout.finishCheckout();
+        String confirmationText = confirmation.getCompleteHeader().getText();
+
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(badgeCount)
+                    .as("Cart badge count")
+                    .isEqualTo(1);
+
+            softAssertions.assertThat(confirmationText)
+                    .as("Order confirmation text")
+                    .isEqualTo("Thank you for your order!");
+        });
     }
 }
