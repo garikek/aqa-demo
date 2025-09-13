@@ -25,6 +25,8 @@
 		<jackson-databind.version>2.15.2</jackson-databind.version>
 		<assertj-core.version>4.0.0-M1</assertj-core.version>
 		<faker.version>1.0.2</faker.version>
+		<playwright.version>1.53.0</playwright.version>
+		<config.version>1.4.3</config.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -35,10 +37,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -82,7 +80,6 @@
 			<groupId>org.awaitility</groupId>
 			<artifactId>awaitility</artifactId>
 			<version>${awaitility.version}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -105,6 +102,16 @@
 			<artifactId>javafaker</artifactId>
 			<version>${faker.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.microsoft.playwright</groupId>
+			<artifactId>playwright</artifactId>
+			<version>${playwright.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.typesafe</groupId>
+			<artifactId>config</artifactId>
+			<version>${config.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -125,9 +132,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven-surefire-plugin.version}</version>
-				<configuration>
-					<systemPropertiesFile>src/test/resources/test.properties</systemPropertiesFile>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>io.qameta.allure</groupId>

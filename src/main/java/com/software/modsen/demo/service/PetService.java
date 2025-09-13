@@ -1,7 +1,7 @@
 package com.software.modsen.demo.service;
 
 import com.software.modsen.demo.client.PetClient;
-import com.software.modsen.demo.model.Pet;
+import com.software.modsen.demo.dto.request.Pet;
 import io.restassured.response.Response;
 
 public class PetService {
